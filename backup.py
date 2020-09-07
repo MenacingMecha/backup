@@ -56,7 +56,7 @@ def run_backups(paths: List[BackupPath]):
             subprocess.call(
                 [
                     "rsync",
-                    "-ahn",
+                    "-ah",
                     "--info=progress2",
                     "--partial",
                     backup_path.source_path,
