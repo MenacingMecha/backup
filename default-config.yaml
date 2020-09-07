@@ -1,0 +1,7 @@
+paths:
+  backup1:
+    source: "/path/to/source/dir1/"
+    dest: "/path/to/dest/dir1"
+  backup2:
+    source: "/path/to/source/dir2/"
+    dest: "/path/to/dest/dir2"
