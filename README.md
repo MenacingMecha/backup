@@ -11,4 +11,13 @@ optional arguments:
   -c CONFIG_PATH  Specify an alternate config path. Defaults to 'config.yaml'.
 ```
 
-Use ```default-config.yaml``` as a template for your own config files.
+## Config Strucutre
+```yaml
+paths:
+  backup1:
+    source: "/path/to/source/dir1/"
+    dest: "/path/to/dest/dir1"
+  backup2:
+    source: "/path/to/source/dir2/"
+    dest: "/path/to/dest/dir2"
+```
