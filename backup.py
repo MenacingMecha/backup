@@ -17,6 +17,7 @@ class BackupPath:
         return os.path.exists(self.source_path) and os.path.exists(self.dest_path)
 
 
+@staticmethod
 def config_has_key(config: dict, key: str, key_location: str) -> bool:
     try:
         config[key]
@@ -26,6 +27,7 @@ def config_has_key(config: dict, key: str, key_location: str) -> bool:
         return True
 
 
+@staticmethod
 def get_backup_paths_from_config(config: dict) -> List[BackupPath]:
     backup_paths = []
     paths_key = "paths"
@@ -46,6 +48,7 @@ def get_backup_paths_from_config(config: dict) -> List[BackupPath]:
     return backup_paths
 
 
+@staticmethod
 def run_backups(paths: List[BackupPath]):
     index = 0
     for backup_path in paths:
@@ -68,6 +71,7 @@ def run_backups(paths: List[BackupPath]):
         print("")
 
 
+@staticmethod
 def get_args() -> argparse:
     parser = argparse.ArgumentParser()
     parser.add_argument(
