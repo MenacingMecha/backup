@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-
 import os
 import yaml
 import logging
 import argparse
 import subprocess
 from typing import List, TextIO
+
+SOURCE_PATH_KEY = "source"
+DESTINATION_PATH_KEY = "dest"
+PATHS_KEY = "paths"
 
 
 class BackupPath:
@@ -18,7 +21,7 @@ class BackupPath:
 
 
 @staticmethod
-def config_has_key(config: dict, key: str, key_location: str) -> bool:
+def _config_has_key(config: dict, key: str, key_location: str) -> bool:
     try:
         config[key]
     except KeyError:
@@ -28,28 +31,27 @@ def config_has_key(config: dict, key: str, key_location: str) -> bool:
 
 
 @staticmethod
-def get_backup_paths_from_config(config: dict) -> List[BackupPath]:
+def _get_backup_paths_from_config(config: dict) -> List[BackupPath]:
     backup_paths = []
-    paths_key = "paths"
-    if config_has_key(config, paths_key, "base yaml"):
-        paths = config[paths_key]
-        source_path_key = "source"
-        dest_path_key = "dest"
+    if _config_has_key(config, PATHS_KEY, "base yaml"):
+        paths = config[PATHS_KEY]
         for backup_path in paths:
-            if config_has_key(
-                paths[backup_path], source_path_key, backup_path
-            ) and config_has_key(paths[backup_path], dest_path_key, backup_path):
+            if _config_has_key(
+                paths[backup_path], SOURCE_PATH_KEY, backup_path
+            ) and _config_has_key(
+                paths[backup_path], DESTINATION_PATH_KEY, backup_path
+            ):
                 backup_paths.append(
                     BackupPath(
-                        paths[backup_path][source_path_key],
-                        paths[backup_path][dest_path_key],
+                        paths[backup_path][SOURCE_PATH_KEY],
+                        paths[backup_path][DESTINATION_PATH_KEY],
                     )
                 )
     return backup_paths
 
 
 @staticmethod
-def run_backups(paths: List[BackupPath]):
+def _run_backups(paths: List[BackupPath]):
     index = 0
     for backup_path in paths:
         index += 1
@@ -72,7 +74,7 @@ def run_backups(paths: List[BackupPath]):
 
 
 @staticmethod
-def get_args() -> argparse:
+def _get_args() -> argparse:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-c",
@@ -85,8 +87,8 @@ def get_args() -> argparse:
 
 
 if __name__ == "__main__":
-    with open(get_args().config_path) as file:
+    with open(_get_args().config_path) as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
-    backup_paths = get_backup_paths_from_config(config)
-    run_backups(backup_paths)
+    backup_paths = _get_backup_paths_from_config(config)
+    _run_backups(backup_paths)
