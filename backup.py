@@ -33,10 +33,14 @@ def _config_has_key(config: dict, key: str, key_location: str) -> bool:
 @staticmethod
 def _run_backups(paths: List[BackupPath]):
     index = 0
+    total_paths = len(paths)
     for backup_path in paths:
         index += 1
-        print("Backup: " + str(index) + "/" + str(len(paths)))
-        print("Source=" + backup_path.source_path + " Dest=" + backup_path.dest_path)
+        print(
+            "Source={}; Dest={} - ({}/{})".format(
+                backup_path.source_path, backup_path.dest_path, index, total_paths
+            )
+        )
         if backup_path.are_paths_valid():
             subprocess.call(
                 [
