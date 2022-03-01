@@ -31,26 +31,6 @@ def _config_has_key(config: dict, key: str, key_location: str) -> bool:
 
 
 @staticmethod
-def _get_backup_paths_from_config(config: dict) -> List[BackupPath]:
-    backup_paths = []
-    if _config_has_key(config, PATHS_KEY, "base yaml"):
-        paths = config[PATHS_KEY]
-        for backup_path in paths:
-            if _config_has_key(
-                paths[backup_path], SOURCE_PATH_KEY, backup_path
-            ) and _config_has_key(
-                paths[backup_path], DESTINATION_PATH_KEY, backup_path
-            ):
-                backup_paths.append(
-                    BackupPath(
-                        paths[backup_path][SOURCE_PATH_KEY],
-                        paths[backup_path][DESTINATION_PATH_KEY],
-                    )
-                )
-    return backup_paths
-
-
-@staticmethod
 def _run_backups(paths: List[BackupPath]):
     index = 0
     for backup_path in paths:
@@ -90,5 +70,12 @@ if __name__ == "__main__":
     with open(_get_args().config_path) as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
-    backup_paths = _get_backup_paths_from_config(config)
-    _run_backups(backup_paths)
+    if _config_has_key(config, PATHS_KEY, "base yaml"):
+        paths = config[PATHS_KEY]
+        backup_paths = [
+            BackupPath(paths[x][SOURCE_PATH_KEY], paths[x][DESTINATION_PATH_KEY])
+            for x in paths
+            if _config_has_key(paths[x], SOURCE_PATH_KEY, x)
+            and _config_has_key(paths[x], DESTINATION_PATH_KEY, x)
+        ]
+        _run_backups(backup_paths)
