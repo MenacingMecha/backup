@@ -20,4 +20,8 @@ paths:
   backup2:
     source: "/path/to/source/dir2/"
     dest: "/path/to/dest/dir2"
+  optional-delete-flag:
+    source: "/path/to/source/delete-dir/"
+    dest: "/path/to/dest/delete-dir"
+    delete: true  # files in dest that aren't in source will be deleted
 ```
