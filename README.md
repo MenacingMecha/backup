@@ -24,4 +24,10 @@ paths:
     source: "/path/to/source/delete-dir/"
     dest: "/path/to/dest/delete-dir"
     delete: true  # files in dest that aren't in source will be deleted
+  optional-whitelist-flag:
+    source: "/path/to/source/only-want-to-backup-archives-dir/"
+    dest: "/path/to/dest/only-want-to-backup-archives-dir"
+    whitelist:  # only includes files that match the following list items
+      - "*.zip"
+      - "*.7z"
 ```

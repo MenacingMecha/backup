@@ -10,21 +10,29 @@ SOURCE_PATH_KEY = "source"
 DESTINATION_PATH_KEY = "dest"
 PATHS_KEY = "paths"
 DELETE_PATH_KEY = "delete"
+WHITELIST_KEY = "whitelist"
 DEFAULT_RSYNC_COMMANDS = [
     "rsync",
     "-ah",
     "--info=progress2",
     "--partial",
 ]
+WHITELIST_INCLUDES_PREFIX = "--include=*/"
+WHITELIST_INCLUDES_SUFFIX = "--exclude=*"
 
 
 class BackupPath:
     def __init__(
-        self, source_path_value: str, dest_path_value: str, should_delete_value: bool
+        self,
+        source_path_value: str,
+        dest_path_value: str,
+        should_delete_value: bool,
+        whitelist: List,
     ):
         self.source_path = source_path_value
         self.dest_path = dest_path_value
         self.should_delete = should_delete_value
+        self.whitelist = whitelist
 
     def are_paths_valid(self) -> bool:
         return os.path.exists(self.source_path) and os.path.exists(self.dest_path)
@@ -57,12 +65,26 @@ def _run_backups(paths: List[BackupPath]):
             )
         )
         if backup_path.are_paths_valid():
-            commands = DEFAULT_RSYNC_COMMANDS + [
+            commands = DEFAULT_RSYNC_COMMANDS.copy()
+
+            if len(backup_path.whitelist) > 0:
+                whitelist_includes = [
+                    "--include={}".format(x) for x in backup_path.whitelist
+                ]
+                commands += (
+                    [WHITELIST_INCLUDES_PREFIX]
+                    + whitelist_includes
+                    + [WHITELIST_INCLUDES_SUFFIX]
+                )
+
+            commands += [
                 backup_path.source_path,
                 backup_path.dest_path,
             ]
+
             if backup_path.should_delete:
                 commands.append("--delete")
+
             subprocess.call(commands)
         else:
             logging.warning("Path is invalid. Check source and dest paths exist.")
@@ -95,6 +117,9 @@ if __name__ == "__main__":
                 paths[x][DELETE_PATH_KEY]
                 if _config_has_key(paths[x], DELETE_PATH_KEY, x, False)
                 else False,
+                paths[x][WHITELIST_KEY]
+                if _config_has_key(paths[x], WHITELIST_KEY, x, False)
+                else [],
             )
             for x in paths
             if _config_has_key(paths[x], SOURCE_PATH_KEY, x)
