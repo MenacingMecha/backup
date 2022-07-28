@@ -17,6 +17,7 @@ DEFAULT_RSYNC_COMMANDS = [
     "--info=progress2",
     "--partial",
     "--prune-empty-dirs",
+    "--inplace",
 ]
 WHITELIST_INCLUDES_PREFIX = "--include=*/"
 WHITELIST_INCLUDES_SUFFIX = "--exclude=*"
